@@ -1,0 +1,62 @@
+services:
+  spire-server:
+    image: ghcr.io/spiffe/spire-server:1.8.7
+    command: ["-config", "/opt/spire/conf/server/server.conf"]
+    volumes:
+      - ./server.conf:/opt/spire/conf/server/server.conf:ro
+      - spire-server-data:/opt/spire/data
+    ports:
+      - "8081:8081"
+
+  spire-agent:
+    image: ghcr.io/spiffe/spire-agent:1.8.7
+    pid: "host"
+    user: "0"
+    command: ["-config", "/opt/spire/conf/agent/agent.conf"]
+    depends_on:
+      - spire-server
+    volumes:
+      - ./agent.conf:/opt/spire/conf/agent/agent.conf:ro
+      - spire-agent-data:/opt/spire/data
+      - spire-socket:/tmp/spire-agent/public
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  
+  agent-b-server:
+    build: 
+      context: .
+      dockerfile: Dockerfile.python
+    labels:
+      - "app=agent_b"
+    environment:
+      - SPIFFE_ENDPOINT_SOCKET=unix:///tmp/spire-agent/public/api.sock
+    volumes:
+      - ./agent_b.py:/app/main.py:ro
+      - ./agent_pb2.py:/app/agent_pb2.py:ro
+      - ./agent_pb2_grpc.py:/app/agent_pb2_grpc.py:ro
+      - spire-socket:/tmp/spire-agent/public:ro
+    ports:
+      - "50051:50051"
+    depends_on:
+      - spire-agent
+
+  agent-a-client:
+    build: 
+      context: .
+      dockerfile: Dockerfile.python
+    labels:
+      - "app=agent_a"
+    environment:
+      - SPIFFE_ENDPOINT_SOCKET=unix:///tmp/spire-agent/public/api.sock
+    volumes:
+      - ./agent_a.py:/app/main.py:ro
+      - ./agent_pb2.py:/app/agent_pb2.py:ro
+      - ./agent_pb2_grpc.py:/app/agent_pb2_grpc.py:ro
+      - spire-socket:/tmp/spire-agent/public:ro
+    depends_on:
+      - agent-b-server
+
+volumes:
+  spire-server-data:
+  spire-agent-data:
+  spire-socket:

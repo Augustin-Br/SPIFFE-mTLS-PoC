@@ -1,0 +1,10 @@
+**/data/*
+!**/data/.gitkeep
+
+spire-secrets/*
+!spire-secrets/.gitkeep
+
+*.sock
+__pycache__/
+*.pyc
+.env

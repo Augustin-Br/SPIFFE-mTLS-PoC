@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package agent;
+
+service AgentCommunication {
+  rpc SendPrompt (MessageRequest) returns (MessageReply) {}
+}
+
+message MessageRequest {
+  string prompt_text = 1;
+}
+
+message MessageReply {
+  string response_text = 1;
+}
