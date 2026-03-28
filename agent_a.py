@@ -53,16 +53,21 @@ def run():
         certificate_chain=cert_chain_pem
     )
 
-    target_spiffe_id = "spiffe://blog.local/agent_b"
     
-    options = (
-        ('grpc.ssl_target_name_override', target_spiffe_id),
-    )
+    # target_spiffe_id = "spiffe://blog.local/agent_b"
+    
+    # options = (
+    #     ('grpc.ssl_target_name_override', target_spiffe_id),
+    # )
+
+    # logging.info("Connecting to Agent B via mTLS...")
+    # with grpc.secure_channel('agent-b-server:50051', credentials) as channel:
+    #     stub = agent_pb2_grpc.AgentCommunicationStub(channel)
+
 
     logging.info("Connecting to Agent B via mTLS...")
     with grpc.secure_channel('agent-b-server:50051', credentials) as channel:
         stub = agent_pb2_grpc.AgentCommunicationStub(channel)
-        
         while True:
             try:
                 logging.info("Sending prompt to Agent B...")

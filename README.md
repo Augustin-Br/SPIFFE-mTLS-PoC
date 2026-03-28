@@ -20,16 +20,23 @@ Instead of relying on easily compromised API keys or long-lived passwords, this 
 ### 1. Start the Infrastructure
 Launch the SPIRE control plane and the Python workloads:
 ```bash
+docker compose up -d spire-server
+docker compose exec spire-server /opt/spire/bin/spire-server token generate -spiffeID spiffe://blog.local/agent-poc
+```
+Important: Copy the generated token and paste it into the join_token field inside agent.conf.
+
+### 2. Start the rest of the infrastructure
+```bash
 docker compose up -d
 ```
 
-### 2. Register the Workloads
+### 3. Register the Workloads
 Run the initialization script to register Agent A and Agent B with the SPIRE Server. This allows the SPIRE Agent to issue them their respective certificates.
 ```bash
 ./init-spire.sh
 ```
 
-### 3. Execution
+### 4. Execution
 Check the logs of the server (Agent B) to see it successfully fetching its identity and listening for requests:
 ```bash
 docker compose logs -f agent-b-server
@@ -41,6 +48,8 @@ docker compose logs -f agent-a-client
 
 You should see Agent B successfully decoding the SPIFFE ID of Agent A:
 `Response from Agent B: Hello spiffe://blog.local/agent_a, your message 'Hello Agent B, do you trust me?' was successfully received and validated.`
+
+![exec](img/exec.png)
 
 ## Security Notes
 * No hardcoded credentials are used in the Python code.

@@ -22,6 +22,7 @@ docker compose exec spire-server /opt/spire/bin/spire-server entry create \
 docker compose exec spire-server /opt/spire/bin/spire-server entry create \
     -parentID spiffe://blog.local/agent-poc \
     -spiffeID spiffe://blog.local/agent_b \
-    -selector docker:label:app:agent_b
+    -selector docker:label:app:agent_b \
+    -dns agent-b-server
 
 echo "--- Registration Complete ---"
