@@ -1,5 +1,7 @@
 # Zero Trust mTLS for AI Agents with SPIFFE/SPIRE
 
+**Read the accompanying blog post:** [Securing AI Workloads with SPIFFE/SPIRE](https://augustinbrenner.com/posts/securing-ai-workloads-spiffe-spire)
+
 This repository is a Proof of Concept (PoC) demonstrating how to establish secure, dynamically authenticated Machine-to-Machine (M2M) communication between two Python applications (AI Agents) using the **SPIFFE/SPIRE** framework and **gRPC**.
 
 Instead of relying on easily compromised API keys or long-lived passwords, this architecture uses short-lived X.509 certificates tied directly to the cryptographic identity of the Docker containers (Workload Attestation).
